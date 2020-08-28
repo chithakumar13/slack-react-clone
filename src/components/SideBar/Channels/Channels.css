@@ -5,3 +5,7 @@
 .clickable:hover{
     cursor: pointer;
 }
+
+.ui.menu .item.active{
+    background : #1164A3 !important;
+}

@@ -18,14 +18,19 @@ const Channels = (props) => {
         channelsRef.on('child_added', (snap) => {
             setChannelsState((currentState) => {
                 let updatedState = [...currentState];
-                updatedState.push(snap.val());
-                if (updatedState.length === 1) {
-                    props.selectChannel(updatedState[0])
-                }
+                updatedState.push(snap.val());               
                 return updatedState;
             })
-        })
+        });
+
+        return () => channelsRef.off();
     }, [])
+
+    useEffect(()=> {
+        if (channelsState.length > 0) {
+            props.selectChannel(channelsState[0])
+        }
+    },[!props.channel ?channelsState : null ])
 
     const openModal = () => {
         setModalOpenState(true);
@@ -46,7 +51,7 @@ const Channels = (props) => {
                     key={channel.id}
                     name={channel.name}
                     onClick={() => props.selectChannel(channel)}
-                    active={channel.id == props.channel.id}
+                    active={props.channel && channel.id === props.channel.id}
                 >
                 </Menu.Item>
             })

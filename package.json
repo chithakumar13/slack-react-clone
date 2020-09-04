@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "firebase": "^7.19.0",
     "javascript-time-ago": "^2.0.13",
+    "mime-type": "^4.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.1",

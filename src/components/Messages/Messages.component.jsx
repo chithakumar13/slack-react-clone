@@ -16,6 +16,7 @@ const Messages = (props) => {
 
     useEffect(() => {
         if (props.channel) {
+            setMessagesState([]);
             messageRef.child(props.channel.id).on('child_added', (snap) => {
                 setMessagesState((currentState) => {
                     let updatedState = [...currentState];

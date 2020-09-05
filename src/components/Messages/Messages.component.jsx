@@ -14,6 +14,8 @@ const Messages = (props) => {
 
     const [messagesState, setMessagesState] = useState([]);
 
+    const [searchTermState, setSearchTermState] = useState("");
+
     useEffect(() => {
         if (props.channel) {
             setMessagesState([]);
@@ -30,14 +32,43 @@ const Messages = (props) => {
     }, [props.channel])
 
     const displayMessages = () => {
-        if (messagesState.length > 0) {
-            return messagesState.map((message) => {
+        let messagesToDisplay = searchTermState ? filterMessageBySearchTerm() : messagesState;
+        if (messagesToDisplay.length > 0) {
+            return messagesToDisplay.map((message) => {
                 return <MessageContent ownMessage={message.user.id === props.user.uid} key={message.timestamp} message={message} />
             })
         }
     }
 
-    return <div className="messages"><MessageHeader />
+    const uniqueusersCount = () => {
+        const uniqueUsers = messagesState.reduce((acc, message) => {
+            if (!acc.includes(message.user.name)) {
+                acc.push(message.user.name);
+            }
+            return acc;
+        }, []);
+
+        return uniqueUsers.length;
+    }
+
+    const searchTermChange = (e) => {
+        const target = e.target;
+        setSearchTermState(target.value);
+    }
+
+    const filterMessageBySearchTerm = () => {
+        const regex = new RegExp(searchTermState,"gi");
+        const messages = messagesState.reduce((acc, message) => {
+            if ((message.content && message.content.match(regex)) || message.user.name.match(regex)) {
+                acc.push(message);
+            }
+            return acc;
+        }, []);
+
+        return messages;
+    }
+
+    return <div className="messages"><MessageHeader searchTermChange={searchTermChange} channelName={props.channel?.name} uniqueUsers={uniqueusersCount()} />
         <Segment className="messagecontent">
             <Comment.Group>
                 {displayMessages()}
@@ -49,7 +80,7 @@ const Messages = (props) => {
 const mapStateToProps = (state) => {
     return {
         channel: state.channel.currentChannel,
-        user : state.user.currentUser
+        user: state.user.currentUser
     }
 }
 

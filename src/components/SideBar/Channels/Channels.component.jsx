@@ -53,6 +53,7 @@ const Channels = (props) => {
                     onClick={() => props.selectChannel(channel)}
                     active={props.channel && channel.id === props.channel.id}
                 >
+                    {"# " + channel.name}
                 </Menu.Item>
             })
         }
@@ -99,7 +100,7 @@ const Channels = (props) => {
     }
 
     return <> <Menu.Menu>
-        <Menu.Item>
+        <Menu.Item style={{fontSize : '17px'}}>
             <span>
                 <Icon name="exchange" /> Channels
             </span>

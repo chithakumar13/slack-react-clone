@@ -68,7 +68,7 @@ const Messages = (props) => {
         return messages;
     }
 
-    return <div className="messages"><MessageHeader searchTermChange={searchTermChange} channelName={props.channel?.name} uniqueUsers={uniqueusersCount()} />
+    return <div className="messages"><MessageHeader isPrivateChat={props.channel?.isPrivateChat} searchTermChange={searchTermChange} channelName={props.channel?.name} uniqueUsers={uniqueusersCount()} />
         <Segment className="messagecontent">
             <Comment.Group>
                 {displayMessages()}

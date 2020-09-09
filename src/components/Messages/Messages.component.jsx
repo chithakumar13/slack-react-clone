@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 
 import MessageHeader from './MessageHeader/MessageHeader.component';
 import MessageContent from "./MessageContent/MessageContent.component";
@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { setfavouriteChannel, removefavouriteChannel } from "../../store/actioncreator";
 import firebase from "../../server/firebase";
 import { Segment, Comment } from 'semantic-ui-react';
-import "./Messages.css";
+import "./Messages.css"; 
 
 const Messages = (props) => {
 
@@ -18,6 +18,8 @@ const Messages = (props) => {
     const [messagesState, setMessagesState] = useState([]);
 
     const [searchTermState, setSearchTermState] = useState("");
+
+    let divRef = useRef();
 
     useEffect(() => {
         if (props.channel) {
@@ -51,14 +53,21 @@ const Messages = (props) => {
         }
     }, [props.user])
 
+    useEffect(()=> {
+        divRef.scrollIntoView({behavior : 'smooth'});
+    },[messagesState])
 
     const displayMessages = () => {
         let messagesToDisplay = searchTermState ? filterMessageBySearchTerm() : messagesState;
         if (messagesToDisplay.length > 0) {
             return messagesToDisplay.map((message) => {
-                return <MessageContent ownMessage={message.user.id === props.user.uid} key={message.timestamp} message={message} />
+                return <MessageContent imageLoaded={imageLoaded} ownMessage={message.user.id === props.user.uid} key={message.timestamp} message={message} />
             })
         }
+    }
+
+    const imageLoaded= () => {
+        divRef.scrollIntoView({behavior : 'smooth'});
     }
 
     const uniqueusersCount = () => {
@@ -106,6 +115,7 @@ const Messages = (props) => {
         <Segment className="messagecontent">
             <Comment.Group>
                 {displayMessages()}
+                <div ref={currentEl => divRef = currentEl}></div>
             </Comment.Group>
         </Segment>
         <MessageInput /></div>

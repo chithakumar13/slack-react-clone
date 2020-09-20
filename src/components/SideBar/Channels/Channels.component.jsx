@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import firebase from "../../../server/firebase";
 import { setChannel } from "../../../store/actioncreator"
+import { Notification } from "../Notification/Notification.component";
 
 import './Channels.css';
 import { Menu, Icon, Modal, Button, Form, Segment } from 'semantic-ui-react';
@@ -13,6 +14,7 @@ const Channels = (props) => {
     const [channelsState, setChannelsState] = useState([]);
 
     const channelsRef = firebase.database().ref("channels");
+    const usersRef = firebase.database().ref("users");
 
     useEffect(() => {
         channelsRef.on('child_added', (snap) => {
@@ -50,13 +52,28 @@ const Channels = (props) => {
                 return <Menu.Item
                     key={channel.id}
                     name={channel.name}
-                    onClick={() => props.selectChannel(channel)}
+                    onClick={() => selectChannel(channel)}
                     active={props.channel && channel.id === props.channel.id && !props.channel.isFavourite}
                 >
-                    {"# " + channel.name}
+                      <Notification user={props.user} channel={props.channel}
+                        notificationChannelId={channel.id}
+                        displayName= {"# " + channel.name} />
+                   
                 </Menu.Item>
             })
         }
+    }
+
+    const selectChannel = (channel) => {
+        setLastVisited(props.user,props.channel);
+        setLastVisited(props.user,channel);
+        props.selectChannel(channel);
+    }
+
+    const setLastVisited = (user, channel) => {
+        const lastVisited = usersRef.child(user.uid).child("lastVisited").child(channel.id);
+        lastVisited.set(firebase.database.ServerValue.TIMESTAMP);
+        lastVisited.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
     }
 
     const onSubmit = () => {

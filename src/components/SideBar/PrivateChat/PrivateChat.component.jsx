@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import firebase from "../../../server/firebase";
 import { setChannel } from "../../../store/actioncreator"
+import { Notification } from "../Notification/Notification.component";
 
 import { Menu, Icon } from 'semantic-ui-react';
 
@@ -76,7 +77,11 @@ const PrivateChat = (props) => {
                     active={props.channel && generateChannelId(user.id) === props.channel.id}
                 >
                     <Icon name="circle" color={`${connectedUsersState.indexOf(user.id) !== -1 ? "green" : "red"}`} />
-                    {"@ " + user.name}
+
+                    <Notification user={props.user} channel={props.channel}
+                        notificationChannelId={generateChannelId(user.id)}
+                        displayName={"@ " + user.name} />
+                        
                 </Menu.Item>
             })
         }
@@ -85,7 +90,15 @@ const PrivateChat = (props) => {
     const selectUser = (user) => {
         let userTemp = { ...user };
         userTemp.id = generateChannelId(user.id);
+        setLastVisited(props.user, props.channel);
+        setLastVisited(props.user, userTemp);
         props.selectChannel(userTemp);
+    }
+
+    const setLastVisited = (user, channel) => {
+        const lastVisited = usersRef.child(user.uid).child("lastVisited").child(channel.id);
+        lastVisited.set(firebase.database.ServerValue.TIMESTAMP);
+        lastVisited.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
     }
 
     const generateChannelId = (userId) => {

@@ -6,3 +6,5 @@ Both the tutorial series and this repository are currently work in progress, i w
 
 
 Live Demo of the App - https://slack-react-clone-aeccf.web.app
+
+<a href="https://discord.gg/qkkW7KFxCV">Join the CK Algos Discord</a> 
